@@ -6,4 +6,4 @@ Customization to summarize and zoom to individual RPZs.
 Version 2.12
 
 INSTRUCTIONS:
-1. Copy Widget.html and Widget.js to \widgets\About
+1. Copy Widget.html and Widget.js to \widgets\About\
