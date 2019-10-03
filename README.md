@@ -3,7 +3,7 @@ About Widget for RPZ Voting (https://wspdsmap.cityoftacoma.org/website/PW/Vote_R
 
 Customization to summarize and zoom to individual RPZs.
 
-Version 2.12
+Version 2.13
 
 INSTRUCTIONS:
 1. Copy Widget.html and Widget.js to \widgets\About\
