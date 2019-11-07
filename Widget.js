@@ -48,7 +48,6 @@ define(['dojo/_base/declare',
 				tpImp.startup(); //place on page (waits for appendChild step)
 				
 				*/
-
 			},
 
 			startup: function () {
@@ -161,7 +160,7 @@ define(['dojo/_base/declare',
 					this.Accordion_Implemented2.appendChild(aContainer.domNode); //Add to DOM by data-dojo-attach-point 'Accordion_Implemented2'
 					aContainer.startup(); //Complete on page
 					aContainer.on('click', lang.hitch(this, this._zoomToRPZ)); //Add click event to RPZ section - Need lang.hitch to keep scope of function within widget  - CHANGE THIS TO ONOPEN EVENT FOR EACH PANEL
-	
+
 				})); //End lang.hitch
 				//End unique Implemented RPZs-----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -216,7 +215,7 @@ define(['dojo/_base/declare',
 			},
 
 			_voteTotal: function () {  //MJM - Since this within the RPZ content the first event will be to zoom to RPZ (_zoomToRPZ), even if user pans away.
-				// https://developers.arcgis.com/web-appbuilder/api-reference/panelmanager.htm | https://developers.arcgis.com/web-appbuilder/api-reference/widgetmanager.htm
+				//https://developers.arcgis.com/web-appbuilder/api-reference/panelmanager.htm | https://developers.arcgis.com/web-appbuilder/api-reference/widgetmanager.htm
 				PanelManager.getInstance().showPanel(this.appConfig.widgetPool.widgets[2]);  //Loads and opens a panel (widget pool not on screen): Infographic Widget (#2) - works, but panel stays open!!! Fix with onClose event.
 				PanelManager.getInstance().closePanel(this.appConfig.widgetPool.widgets[3].id + '_panel');  //Close About Widget
 			},
