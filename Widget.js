@@ -55,8 +55,8 @@ define(['dojo/_base/declare',
 
 			_constructPage: function () { //MJM - Add details in collapsible panels (Accordion) |See TitleGroup as alt to Accordion - https://dojotoolkit.org/reference-guide/1.10/dojox/widget/TitleGroup.html
 				var aContainerProposed = new AccordionContainer({
-					id: "AccordionProposed",
-					style: "height: 250px"
+					id: "AccordionProposed",   //needed for zooming by ID
+					style: "height: 300px"
 				}); //ADJUST HEIGHT DEPENDING ON HOW MANY RPZS | Needed to create enough space with each panel - MAYBE BASE ON NUMBER OF FEATURES 175=3
 
 				var aContainer = new AccordionContainer({ //https://dojotoolkit.org/api/
@@ -74,15 +74,13 @@ define(['dojo/_base/declare',
 				query.returnDistinctValues = true;  //Get unique combo of outFields
 
 				featureLayer.queryFeatures(query, lang.hitch(this, function (result) { //https://developers.arcgis.com/javascript/3/jsapi/featurelayer-amd.html#queryfeatures
-					//MJM - 2019-9-16 Disable Current Poll & Vote links for now
 					//this._zoomToFirst(result.features[0].attributes.Applicatio);  //Zoom to first RPZ in the list (to match the open accordion value)
 					for (i = 0; i < result.features.length; i++) { //Loop through all RPZs, build an individual section containers, and add to accordion
 						var aContent1 = "<div><font face='Arial' size='2'><b>Petitioner:  &nbsp;</b>" + result.features[i].attributes.Petitioner;
 						aContent1 += "<br><b>Time & Days:  &nbsp;</b>" + result.features[i].attributes.Time_Reg + " | " + result.features[i].attributes.Day_Reg;
 						aContent1 += "<br><b>Petition:  &nbsp;</b>" + result.features[i].attributes.PPeriod;
 						aContent1 += "</div>";  //temp fix until line below is uncommented
-						//MJM - 2019-9-16 Disable Current Poll & Vote links for now
-						//aContent1 += "<br><span id='VoteTotal" + i + "' style='color: blue; text-decoration: underline; cursor: pointer;' title='Show current vote totals.'>Current Poll</span> | <span id='Vote" + i + "' style='color: blue; text-decoration: underline; cursor: pointer;' title='Show current vote totals.'>Vote</span></div>";
+						aContent1 += "<br><span id='VoteTotal" + i + "' style='color: blue; text-decoration: underline; cursor: pointer;' title='Show current vote totals.'>Current Poll</span> | <span id='Vote" + i + "' style='color: blue; text-decoration: underline; cursor: pointer;' title='Show current vote totals.'>Vote</span></div>";
 
 						aContainerProposed.addChild(new ContentPane({
 							title: "<b><span id='RPZx'>Residential Parking Zone: " + result.features[i].attributes.Applicatio + "</b></span>",
@@ -90,21 +88,20 @@ define(['dojo/_base/declare',
 							content: aContent1,
 							selected: false
 						}));
+					}  //Done looping through all Proposed RPZs
 
-						// COMMENT OUT FOR TESTING 
-						if (i === result.features.length - 1) { //Done looping through all RPZs
-							for (i = 0; i < result.features.length; i++) { //Unique ids have been added to spans by RPZ, make the link clickable by id
-								var theVoteTotal = "VoteTotal" + i;
-								var theVote = "Vote" + i;
-								//MJM - 2019-9-16 Disable Current Poll & Vote links for now
-								//on(dojo.byId(theVoteTotal), 'click', lang.hitch(this, this._voteTotal)); //Add Vote Total click event
-								//on(dojo.byId(theVote), 'click', lang.hitch(this, this._voteNow)); //Add Vote click event
-							}
-						}
-					}
 					this.Accordion.appendChild(aContainerProposed.domNode); //Add to DOM by data-dojo-attach-point 'Accordion'
 					aContainerProposed.startup(); //Complete on page 
 					aContainerProposed.on('click', lang.hitch(this, this._zoomToProposedRPZ)); //Add click event to RPZ section - Need lang.hitch to keep scope of function within widget  - CHANGE THIS TO ONOPEN EVENT FOR EACH PANEL
+
+					//Add click events to Current Poll & Vote links
+					for (i = 0; i < result.features.length; i++) { //Unique ids have been added to spans by RPZ, make the link clickable by id
+						var theVoteTotal = "VoteTotal" + i;
+						var theVote = "Vote" + i;
+						on(dojo.byId(theVoteTotal), 'click', lang.hitch(this, this._voteTotal)); //Add Vote Total click event
+						on(dojo.byId(theVote), 'click', lang.hitch(this, this._voteNow)); //Add Vote click event
+					}
+
 				})); //End lang.hitch
 				//End unique Proposed RPZs-----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -132,7 +129,7 @@ define(['dojo/_base/declare',
 				query2.returnDistinctValues = true;  //Get unique combo of outFields
 
 				featureLayer2.queryFeatures(query2, lang.hitch(this, function (result) { //https://developers.arcgis.com/javascript/3/jsapi/featurelayer-amd.html#queryfeatures
-					this._zoomToFirst(result.features[0].attributes.RPZ_Num);  //Zoom to first RPZ in the list (to match the open accordion value)
+					//this._zoomToFirst(result.features[0].attributes.RPZ_Num);  //Zoom to first RPZ in the list (to match the open accordion value)
 					for (i = 0; i < result.features.length; i++) { //Loop through all RPZs, build an individual section containers, and add to accordion
 						var aContent = "<div><font face='Arial' size='2'><b>Time & Days:  &nbsp;</b>" + result.features[i].attributes.Time_Reg + " | " + result.features[i].attributes.Day_Reg;
 						aContainer.addChild(new ContentPane({
@@ -162,17 +159,7 @@ define(['dojo/_base/declare',
 
 			_zoomToFirst: function (id) {  //MJM - Initial zoom - first RPZ in list 
 				var query = new Query();
-				//MJM - 2019-9-16 Disable
-				/*
-				var featureLayer = this.widgetManager.map.getLayer("Master_RPZ_Data_7046_6103");  
-				query.where = "Applicatio='" + id + "'";  //RPZ ID
-				featureLayer.queryExtent(query, function (result) {  //https://developers.arcgis.com/javascript/3/jsapi/featurelayer-amd.html#queryextent
-					this._widgetManager.map.setExtent(result.extent.expand(1.4)); //Need '_' to get to widgetManager instead of using hitch | expand extent slightly beyond features
-				})
-				*/
-				//Quick fix for Implemented 2019-9-18
 				var featureLayer2 = this.widgetManager.map.getLayer("Master_RPZ_Data_7046");
-				//query.where = "Applicatio='" + id + "'";  //RPZ ID
 				query.where = "RPZ_Num='" + id + "'";  //RPZ ID
 				featureLayer2.queryExtent(query, function (result) {  //https://developers.arcgis.com/javascript/3/jsapi/featurelayer-amd.html#queryextent
 					this._widgetManager.map.setExtent(result.extent.expand(1.4)); //Need '_' to get to widgetManager instead of using hitch | expand extent slightly beyond features
